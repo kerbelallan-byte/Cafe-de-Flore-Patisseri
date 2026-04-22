@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Café de Flore Patisserie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream:    #F9F5EE;
+    --parchment:#EFE8D8;
+    --mocha:    #3B2A1A;
+    --espresso: #1C130A;
+    --gold:     #B8965A;
+    --gold-lt:  #D4B07A;
+    --blush:    #E8D5C4;
+    --sage:     #8A9B7A;
+    --font-display: 'Cormorant Garamond', serif;
+    --font-body:    'DM Sans', sans-serif;
+    --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--mocha);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.5;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 900;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.4rem 5vw;
+    background: rgba(249,245,238,0.88);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(184,150,90,0.2);
+    transition: padding 0.3s var(--ease);
+  }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: var(--espresso);
+    text-decoration: none;
+    font-style: italic;
+  }
+  .nav-links {
+    display: flex; gap: 2.5rem; list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mocha);
+    text-decoration: none;
+    opacity: 0.75;
+    transition: opacity 0.2s, color 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; color: var(--gold); }
+  .nav-cta {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--cream);
+    background: var(--mocha);
+    padding: 0.65rem 1.4rem;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .nav-cta:hover { background: var(--gold); transform: translateY(-1px); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100svh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 80px;
+  }
+  .hero-left {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 8vw 6vw 8vw 8vw;
+  }
+  .hero-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 500;
+    margin-bottom: 1.6rem;
+    opacity: 0;
+    animation: fadeUp 0.9s var(--ease) 0.2s forwards;
+  }
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 6vw, 5.5rem);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--espresso);
+    margin-bottom: 1.8rem;
+    opacity: 0;
+    animation: fadeUp 0.9s var(--ease) 0.35s forwards;
+  }
+  .hero-title em { font-style: italic; color: var(--gold); }
+  .hero-body {
+    font-size: 1rem;
+    color: var(--mocha);
+    opacity: 0;
+    max-width: 420px;
+    animation: fadeUp 0.9s var(--ease) 0.5s forwards;
+    margin-bottom: 2.8rem;
+    line-height: 1.8;
+  }
+  .hero-body-vis { opacity: 0.72; }
+  .hero-actions {
+    display: flex; gap: 1.2rem; align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.9s var(--ease) 0.65s forwards;
+  }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--mocha); color: var(--cream);
+    padding: 0.9rem 2rem;
+    border-radius: 2px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.25s, transform 0.25s;
+  }
+  .btn-primary:hover { background: var(--gold); transform: translateY(-2px); }
+  .btn-ghost {
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--mocha);
+    text-decoration: none;
+    border-bottom: 1px solid var(--gold);
+    padding-bottom: 2px;
+    transition: color 0.2s;
+  }
+  .btn-ghost:hover { color: var(--gold); }
+
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeIn 1.1s var(--ease) 0.1s forwards;
+  }
+  .hero-right img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center;
+    filter: saturate(0.85) brightness(0.95);
+    transform: scale(1.03);
+    animation: heroZoom 8s var(--ease) forwards;
+  }
+  .hero-right::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to right, rgba(249,245,238,0.15) 0%, transparent 40%);
+  }
+
+  /* ── MARQUEE STRIP ── */
+  .marquee-wrap {
+    overflow: hidden;
+    background: var(--mocha);
+    padding: 0.9rem 0;
+    border-top: 1px solid rgba(184,150,90,0.3);
+    border-bottom: 1px solid rgba(184,150,90,0.3);
+  }
+  .marquee-track {
+    display: flex; gap: 0;
+    white-space: nowrap;
+    animation: marquee 28s linear infinite;
+  }
+  .marquee-item {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--gold-lt);
+    letter-spacing: 0.05em;
+    padding: 0 3rem;
+    flex-shrink: 0;
+  }
+  .marquee-dot {
+    color: var(--gold);
+    padding: 0 0.5rem;
+  }
+
+  /* ── SECTION BASE ── */
+  section { padding: 7rem 8vw; }
+  .section-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 500;
+    margin-bottom: 0.8rem;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 4vw, 3.6rem);
+    font-weight: 300;
+    line-height: 1.15;
+    color: var(--espresso);
+    margin-bottom: 1.4rem;
+  }
+  .section-title em { font-style: italic; color: var(--gold); }
+  .divider {
+    width: 48px; height: 1px;
+    background: var(--gold);
+    margin-bottom: 2rem;
+  }
+
+  /* ── GALLERY BENTO ── */
+  .gallery-section { background: var(--parchment); }
+  .gallery-intro {
+    max-width: 540px;
+    margin-bottom: 3.5rem;
+  }
+  .gallery-intro p {
+    font-size: 1rem; color: var(--mocha); opacity: 0.75; line-height: 1.9;
+  }
+  .bento-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: 340px 280px;
+    gap: 12px;
+  }
+  .bento-cell {
+    overflow: hidden;
+    border-radius: 6px;
+    position: relative;
+    background: var(--blush);
+  }
+  .bento-cell img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: saturate(0.82) brightness(0.97);
+    transition: transform 0.7s var(--ease), filter 0.5s;
+  }
+  .bento-cell:hover img {
+    transform: scale(1.06);
+    filter: saturate(0.95) brightness(1.02);
+  }
+  .bento-cell::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(28,19,10,0.25) 0%, transparent 55%);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .bento-cell:hover::after { opacity: 1; }
+
+  .bento-1 { grid-column: 1 / 6; grid-row: 1; }
+  .bento-2 { grid-column: 6 / 9; grid-row: 1; }
+  .bento-3 { grid-column: 9 / 13; grid-row: 1; }
+  .bento-4 { grid-column: 1 / 5; grid-row: 2; }
+  .bento-5 { grid-column: 5 / 9; grid-row: 2; background: var(--mocha); display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; padding: 2rem; }
+  .bento-6 { grid-column: 9 / 13; grid-row: 2; }
+
+  .bento-quote {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--gold-lt);
+    line-height: 1.4;
+    margin-bottom: 1rem;
+  }
+  .bento-quote-attr {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.7;
+  }
+
+  /* ── MENU SECTION ── */
+  .menu-section { background: var(--cream); }
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 3.5rem;
+  }
+  .menu-card {
+    background: var(--parchment);
+    border-radius: 8px;
+    padding: 2.4rem 2rem;
+    border: 1px solid rgba(184,150,90,0.18);
+    transition: transform 0.3s var(--ease), box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .menu-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold) 0%, var(--gold-lt) 100%);
+    transform: scaleX(0);
+    transition: transform 0.4s var(--ease);
+    transform-origin: left;
+  }
+  .menu-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(59,42,26,0.08); }
+  .menu-card:hover::before { transform: scaleX(1); }
+  .menu-card-icon {
+    font-size: 1.6rem;
+    margin-bottom: 1.2rem;
+  }
+  .menu-card-title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--espresso);
+    margin-bottom: 1.4rem;
+    font-style: italic;
+  }
+  .menu-items { list-style: none; }
+  .menu-items li {
+    font-size: 0.88rem;
+    color: var(--mocha);
+    opacity: 0.8;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid rgba(59,42,26,0.06);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .menu-items li:last-child { border-bottom: none; }
+  .menu-items li::before {
+    content: '';
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex-shrink: 0;
+  }
+
+  /* ── STORY SECTION ── */
+  .story-section {
+    background: var(--mocha);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    padding: 0;
+  }
+  .story-img {
+    width: 100%; height: 100%;
+    min-height: 480px;
+    object-fit: cover;
+    filter: saturate(0.7) brightness(0.85);
+    display: block;
+  }
+  .story-content {
+    padding: 7rem 6vw;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .story-content .section-label { color: var(--gold-lt); }
+  .story-content .section-title { color: var(--cream); }
+  .story-content .divider { background: var(--gold); }
+  .story-body {
+    font-size: 1rem;
+    color: var(--blush);
+    opacity: 0.85;
+    line-height: 1.9;
+    max-width: 480px;
+  }
+
+  /* ── FRANCHISE ── */
+  .franchise-section { background: var(--parchment); }
+  .franchise-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6vw;
+    align-items: start;
+    margin-top: 3rem;
+  }
+  .franchise-pillars { display: flex; flex-direction: column; gap: 1.2rem; }
+  .pillar {
+    display: flex; gap: 1.2rem; align-items: flex-start;
+    padding: 1.4rem 1.6rem;
+    background: var(--cream);
+    border-radius: 8px;
+    border: 1px solid rgba(184,150,90,0.15);
+    transition: box-shadow 0.3s, transform 0.3s;
+  }
+  .pillar:hover { transform: translateX(4px); box-shadow: 0 8px 32px rgba(59,42,26,0.07); }
+  .pillar-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 0.1rem; }
+  .pillar-title {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--espresso);
+    margin-bottom: 0.25rem;
+  }
+  .pillar-text { font-size: 0.85rem; color: var(--mocha); opacity: 0.72; line-height: 1.7; }
+
+  .franchise-form-wrap {
+    background: var(--mocha);
+    border-radius: 12px;
+    padding: 2.8rem;
+  }
+  .form-title {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-style: italic;
+    color: var(--cream);
+    margin-bottom: 0.4rem;
+    font-weight: 300;
+  }
+  .form-sub { font-size: 0.82rem; color: var(--blush); opacity: 0.7; margin-bottom: 1.8rem; }
+  .form-group { margin-bottom: 1.1rem; }
+  .form-group label { display: block; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-lt); margin-bottom: 0.4rem; }
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    background: rgba(249,245,238,0.07);
+    border: 1px solid rgba(184,150,90,0.3);
+    border-radius: 4px;
+    padding: 0.75rem 1rem;
+    color: var(--cream);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    transition: border-color 0.2s, background 0.2s;
+    outline: none;
+  }
+  .form-group input::placeholder,
+  .form-group textarea::placeholder { color: rgba(232,213,196,0.35); }
+  .form-group input:focus,
+  .form-group textarea:focus {
+    border-color: var(--gold);
+    background: rgba(249,245,238,0.1);
+  }
+  .form-group textarea { resize: vertical; min-height: 100px; }
+  .form-submit {
+    width: 100%;
+    padding: 0.95rem;
+    background: var(--gold);
+    color: var(--espresso);
+    border: none;
+    border-radius: 4px;
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    margin-top: 0.5rem;
+  }
+  .form-submit:hover { background: var(--gold-lt); transform: translateY(-1px); }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    background: var(--espresso);
+    padding: 3.5rem 8vw;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    border-top: 1px solid rgba(184,150,90,0.25);
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    font-weight: 300;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 0.4rem;
+  }
+  .stat-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--blush);
+    opacity: 0.6;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--espresso);
+    padding: 4rem 8vw 2.5rem;
+    border-top: 1px solid rgba(184,150,90,0.2);
+  }
+  .footer-inner {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+  }
+  .footer-brand-name {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--cream);
+    margin-bottom: 0.8rem;
+  }
+  .footer-tagline { font-size: 0.82rem; color: var(--blush); opacity: 0.55; line-height: 1.7; max-width: 200px; }
+  .footer-col-title {
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.2rem;
+  }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.65rem; }
+  .footer-links a {
+    font-size: 0.85rem;
+    color: var(--blush);
+    opacity: 0.6;
+    text-decoration: none;
+    transition: opacity 0.2s, color 0.2s;
+  }
+  .footer-links a:hover { opacity: 1; color: var(--gold-lt); }
+  .footer-bottom {
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid rgba(184,150,90,0.12);
+    padding-top: 1.8rem;
+  }
+  .footer-copy { font-size: 0.75rem; color: var(--blush); opacity: 0.4; }
+  .footer-social { display: flex; gap: 1rem; }
+  .footer-social a {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.7;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .footer-social a:hover { opacity: 1; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes heroZoom {
+    from { transform: scale(1.03); }
+    to   { transform: scale(1); }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.75s var(--ease), transform 0.75s var(--ease);
+  }
+  .reveal.in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; min-height: auto; }
+    .hero-right { height: 55vw; }
+    .hero-left { padding: 6rem 8vw 4rem; }
+    .bento-grid { grid-template-rows: 240px 200px 200px; grid-template-columns: 1fr 1fr; }
+    .bento-1 { grid-column: 1/3; grid-row: 1; }
+    .bento-2 { grid-column: 1/2; grid-row: 2; }
+    .bento-3 { grid-column: 2/3; grid-row: 2; }
+    .bento-4 { grid-column: 1/2; grid-row: 3; }
+    .bento-5 { grid-column: 2/3; grid-row: 3; }
+    .bento-6 { display: none; }
+    .menu-grid { grid-template-columns: 1fr; }
+    .story-section { grid-template-columns: 1fr; }
+    .story-img { min-height: 300px; }
+    .franchise-inner { grid-template-columns: 1fr; }
+    .stats-bar { grid-template-columns: 1fr 1fr; }
+    .footer-inner { grid-template-columns: 1fr 1fr; }
+    nav .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">Café de Flore</a>
+  <ul class="nav-links">
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#story">Our Story</a></li>
+    <li><a href="#franchise">Franchise</a></li>
+  </ul>
+  <a class="nav-cta" href="#franchise">Open a Location</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Patisserie · Toronto</p>
+    <h1 class="hero-title">Where every<br/>bite is <em>Paris</em><br/>in a moment.</h1>
+    <p class="hero-body hero-body-vis">Hand-crafted croissants, baguette sandwiches, and artisan pastries — baked fresh, served with warmth, enjoyed forever.</p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="#menu">Explore the Menu</a>
+      <a class="btn-ghost" href="#gallery">View Gallery</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img src="https://cafedeflorepatisserie.com/wp-content/uploads/2025/05/c8392f844afa4c58d6bd4f868815a174.jpg" alt="Café de Flore interior"/>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item">Butter Croissant <span class="marquee-dot">·</span></span>
+    <span class="marquee-item">Smoked Salmon Baguette <span class="marquee-dot">·</span></span>
+    <span class="marquee-item">Pistachio Chocolate Croissant <span class="marquee-dot">·</span></span>
+    <span class="marquee-item">Spinach &amp; Feta Quiche <span class="marquee-dot">·</span></span>
+    <span class="marquee-item">Lemon Beignet <span class="marquee-dot">·</span></span>
+    <span class="marquee-item">Avocado Burrata Baguette <span class="marquee-dot">·</span></span>
+    <span class="marquee-item">Raspberry Scone <span class="marquee-dot">·</span></span>
+    <span class="marquee-item">Custard Beignet <span class="marquee-dot">·</span></span>
+    <!-- duplicate for seamless loop -->
+    <span class="marquee-item">Butter Croissant <span class="marquee-dot">·</span></span>
+    <span class="marquee-item">Smoked Salmon Baguette <span class="marquee-dot">·</span></span>
+    <span class="marquee-item">Pistachio Chocolate Croissant <span class="marquee-dot">·</span></span>
+    <span class="marquee-item">Spinach &amp; Feta Quiche <span class="marquee-dot">·</span></span>
+    <span class="marquee-item">Lemon Beignet <span class="marquee-dot">·</span></span>
+    <span class="marquee-item">Avocado Burrata Baguette <span class="marquee-dot">·</span></span>
+    <span class="marquee-item">Raspberry Scone <span class="marquee-dot">·</span></span>
+    <span class="marquee-item">Custard Beignet <span class="marquee-dot">·</span></span>
+  </div>
+</div>
+
+<!-- GALLERY -->
+<section class="gallery-section" id="gallery">
+  <div class="gallery-intro reveal">
+    <p class="section-label">Gallery</p>
+    <h2 class="section-title">A café that <em>feels</em><br/>as good as it tastes.</h2>
+    <div class="divider"></div>
+    <p>First dates over lattes. Quiet mornings by the window. Flour-dusted counters and fresh flowers. Café de Flore isn't just a space — it's a feeling you'll want to return to.</p>
+  </div>
+  <div class="bento-grid">
+    <div class="bento-cell bento-1 reveal">
+      <img src="https://cafedeflorepatisserie.com/wp-content/uploads/2025/05/c8392f844afa4c58d6bd4f868815a174.jpg" alt="Café de Flore"/>
+    </div>
+    <div class="bento-cell bento-2 reveal reveal-delay-1">
+      <img src="https://cafedeflorepatisserie.com/wp-content/uploads/2025/05/e03d8dc0c00dff1022ebb7ba21d1977f.jpg" alt="Patisserie"/>
+    </div>
+    <div class="bento-cell bento-3 reveal reveal-delay-2">
+      <img src="https://cafedeflorepatisserie.com/wp-content/uploads/2025/05/img_6772.png" alt="Interior"/>
+    </div>
+    <div class="bento-cell bento-4 reveal reveal-delay-1">
+      <img src="https://cafedeflorepatisserie.com/wp-content/uploads/2025/05/img_6773.png" alt="Pastries"/>
+    </div>
+    <div class="bento-cell bento-5 reveal reveal-delay-2">
+      <p class="bento-quote">"Romantic, imperfect, and beautifully real."</p>
+      <span class="bento-quote-attr">Café de Flore</span>
+    </div>
+    <div class="bento-cell bento-6 reveal reveal-delay-3">
+      <img src="https://cafedeflorepatisserie.com/wp-content/uploads/2025/05/e03d8dc0c00dff1022ebb7ba21d1977f.jpg" alt="Coffee"/>
+    </div>
+  </div>
+</section>
+
+<!-- MENU -->
+<section class="menu-section" id="menu">
+  <div class="reveal">
+    <p class="section-label">Food Menu</p>
+    <h2 class="section-title">Made by hand.<br/><em>Loved</em> by everyone.</h2>
+    <div class="divider"></div>
+  </div>
+  <div class="menu-grid">
+    <div class="menu-card reveal reveal-delay-1">
+      <div class="menu-card-icon">🥐</div>
+      <h3 class="menu-card-title">Pastries</h3>
+      <ul class="menu-items">
+        <li>Butter Croissant</li>
+        <li>Chocolate Croissant</li>
+        <li>Pistachio Chocolate Croissant</li>
+        <li>Spinach &amp; Feta Croissant</li>
+        <li>Raspberry Scone</li>
+        <li>Lemon Beignet</li>
+        <li>Chocolate Beignet</li>
+        <li>Custard Beignet</li>
+      </ul>
+    </div>
+    <div class="menu-card reveal reveal-delay-2">
+      <div class="menu-card-icon">🥖</div>
+      <h3 class="menu-card-title">Baguette Sandwiches</h3>
+      <ul class="menu-items">
+        <li>Ham &amp; Cheese</li>
+        <li>Avocado Burrata</li>
+        <li>Salami Mozzarella</li>
+        <li>Turkey Swiss Cheese</li>
+        <li>Smoked Salmon</li>
+      </ul>
+      <div style="margin-top:1.6rem; padding-top:1.4rem; border-top:1px solid rgba(59,42,26,0.08);">
+        <div class="menu-card-icon">🥐</div>
+        <h3 class="menu-card-title" style="margin-top:0.2rem">Croissant Sandwiches</h3>
+        <ul class="menu-items">
+          <li>Turkey Swiss</li>
+          <li>Smoked Salmon</li>
+        </ul>
+      </div>
+    </div>
+    <div class="menu-card reveal reveal-delay-3">
+      <div class="menu-card-icon">🍳</div>
+      <h3 class="menu-card-title">Quiches</h3>
+      <ul class="menu-items">
+        <li>Spinach &amp; Feta Cheese</li>
+        <li>Mushroom &amp; Onion</li>
+      </ul>
+      <div style="margin-top:2rem; padding: 1.6rem; background:var(--mocha); border-radius:6px; text-align:center;">
+        <p style="font-family:var(--font-display); font-size:1.05rem; font-style:italic; color:var(--gold-lt); line-height:1.5; margin-bottom:0.8rem;">"Everything is baked fresh — no shortcuts, no compromises."</p>
+        <a href="#" style="font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); text-decoration:none; border-bottom:1px solid var(--gold); padding-bottom:2px;">View Drink Menu →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STORY -->
+<section class="story-section" id="story">
+  <img class="story-img" src="https://cafedeflorepatisserie.com/wp-content/uploads/2025/05/img_6772.png" alt="Inside Café de Flore"/>
+  <div class="story-content reveal">
+    <p class="section-label">Our Story</p>
+    <h2 class="section-title">A little corner of <em>Paris</em> in Toronto.</h2>
+    <div class="divider"></div>
+    <p class="story-body">Café de Flore Patisserie was born from a simple belief: that life is richer with beautiful food and unhurried moments. Every croissant we fold, every sandwich we assemble, every cup we pour — it's an act of care for the people who walk through our door.<br/><br/>We're proud to be expanding across Toronto, sharing the kind of experience that turns a coffee break into a memory.</p>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat reveal">
+    <div class="stat-num">100%</div>
+    <div class="stat-label">Handmade Daily</div>
+  </div>
+  <div class="stat reveal reveal-delay-1">
+    <div class="stat-num">12+</div>
+    <div class="stat-label">Signature Items</div>
+  </div>
+  <div class="stat reveal reveal-delay-2">
+    <div class="stat-num">∞</div>
+    <div class="stat-label">Good Mornings</div>
+  </div>
+  <div class="stat reveal reveal-delay-3">
+    <div class="stat-num">1</div>
+    <div class="stat-label">City So Far — Growing</div>
+  </div>
+</div>
+
+<!-- FRANCHISE -->
+<section class="franchise-section" id="franchise">
+  <div class="reveal">
+    <p class="section-label">Franchise Opportunity</p>
+    <h2 class="section-title">Build something <em>beautiful</em><br/>with us.</h2>
+    <div class="divider"></div>
+  </div>
+  <div class="franchise-inner">
+    <div class="franchise-pillars">
+      <p style="font-size:1rem; color:var(--mocha); opacity:0.75; line-height:1.9; margin-bottom:1rem;" class="reveal">
+        Café de Flore is expanding across Toronto and inviting passionate partners to grow with us. Our proven model is designed for sustainable growth and fast returns.
+      </p>
+      <div class="pillar reveal reveal-delay-1">
+        <span class="pillar-icon">⚡</span>
+        <div>
+          <div class="pillar-title">Short Payback Periods</div>
+          <div class="pillar-text">A proven business model with high-margin products and an established customer base.</div>
+        </div>
+      </div>
+      <div class="pillar reveal reveal-delay-2">
+        <span class="pillar-icon">🎓</span>
+        <div>
+          <div class="pillar-title">Full Training &amp; Support</div>
+          <div class="pillar-text">From site selection and staff training to grand opening and ongoing marketing support.</div>
+        </div>
+      </div>
+      <div class="pillar reveal reveal-delay-3">
+        <span class="pillar-icon">🧲</span>
+        <div>
+          <div class="pillar-title">Destination-Worthy Design</div>
+          <div class="pillar-text">An attractive store concept that draws in office workers, families, and weekend shoppers alike.</div>
+        </div>
+      </div>
+      <div class="pillar reveal reveal-delay-4">
+        <span class="pillar-icon">🥐</span>
+        <div>
+          <div class="pillar-title">A Menu Customers Love</div>
+          <div class="pillar-text">Signature baguette sandwiches, buttery croissants, and fresh-baked pastries — consistently in demand.</div>
+        </div>
+      </div>
+    </div>
+    <div class="franchise-form-wrap reveal reveal-delay-2">
+      <h3 class="form-title">Let's talk.</h3>
+      <p class="form-sub">Tell us a little about yourself and we'll be in touch.</p>
+      <form id="franchise-form" action="https://formspree.io/f/xgornpvk" method="POST">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" placeholder="Your name" required/>
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="your@email.com" required/>
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" placeholder="Tell us about your interest, location in mind, or any questions…"></textarea>
+        </div>
+        <button type="submit" class="form-submit" id="submit-btn">Send Inquiry</button>
+        <p id="form-success" style="display:none; margin-top:1rem; text-align:center; font-size:0.85rem; color:var(--gold-lt);">✓ Message sent! We'll be in touch soon.</p>
+        <p id="form-error" style="display:none; margin-top:1rem; text-align:center; font-size:0.85rem; color:#e07a7a;">Something went wrong. Please try again.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand-name">Café de Flore Patisserie</div>
+      <p class="footer-tagline">A little corner of Paris in the heart of Toronto.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Navigate</div>
+      <ul class="footer-links">
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#menu">Food Menu</a></li>
+        <li><a href="#story">Our Story</a></li>
+        <li><a href="#franchise">Franchise</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Menu</div>
+      <ul class="footer-links">
+        <li><a href="#">Drink Menu</a></li>
+        <li><a href="#menu">Food Menu</a></li>
+        <li><a href="#">Services</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Connect</div>
+      <ul class="footer-links">
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Contact Us</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2026 Café de Flore Patisserie. All rights reserved.</span>
+    <div class="footer-social">
+      <a href="#">Instagram</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Formspree form submission
+  const form = document.getElementById('franchise-form');
+  const submitBtn = document.getElementById('submit-btn');
+  const successMsg = document.getElementById('form-success');
+  const errorMsg = document.getElementById('form-error');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitBtn.textContent = 'Sending…';
+    submitBtn.disabled = true;
+    successMsg.style.display = 'none';
+    errorMsg.style.display = 'none';
+
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (res.ok) {
+        form.reset();
+        successMsg.style.display = 'block';
+        submitBtn.textContent = 'Sent ✓';
+      } else {
+        errorMsg.style.display = 'block';
+        submitBtn.textContent = 'Send Inquiry';
+        submitBtn.disabled = false;
+      }
+    } catch {
+      errorMsg.style.display = 'block';
+      submitBtn.textContent = 'Send Inquiry';
+      submitBtn.disabled = false;
+    }
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in-view');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Nav shrink on scroll
+  window.addEventListener('scroll', () => {
+    document.querySelector('nav').style.padding =
+      window.scrollY > 60 ? '0.9rem 5vw' : '1.4rem 5vw';
+  });
+</script>
+</body>
+</html>
